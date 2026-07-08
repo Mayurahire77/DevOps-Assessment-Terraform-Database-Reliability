@@ -1,75 +1,132 @@
 ############################################
-# PostgreSQL RDS Instance
+# RDS Instance
 ############################################
 
-resource "aws_db_instance" "this" {
+output "db_instance_id" {
+  description = "RDS Instance ID"
+  value       = aws_db_instance.this.id
+}
 
-  identifier = "${var.project_name}-${var.environment}-postgres"
+output "db_instance_arn" {
+  description = "RDS Instance ARN"
+  value       = aws_db_instance.this.arn
+}
 
-  engine         = var.engine
-  engine_version = var.engine_version
+output "db_identifier" {
+  description = "Database Identifier"
+  value       = aws_db_instance.this.identifier
+}
 
-  instance_class = var.instance_class
+############################################
+# Database Connection
+############################################
 
-  allocated_storage     = var.allocated_storage
-  max_allocated_storage = var.max_allocated_storage
-  storage_type          = var.storage_type
+output "db_name" {
+  description = "Database Name"
+  value       = aws_db_instance.this.db_name
+}
 
-  storage_encrypted = var.storage_encrypted
+output "db_endpoint" {
+  description = "Database Endpoint"
+  value       = aws_db_instance.this.endpoint
+}
 
-  db_name  = var.db_name
-  username = var.db_username
-  password = var.db_password
+output "db_address" {
+  description = "Database Address"
+  value       = aws_db_instance.this.address
+}
 
-  port = 5432
+output "db_port" {
+  description = "Database Port"
+  value       = aws_db_instance.this.port
+}
 
-  db_subnet_group_name   = aws_db_subnet_group.this.name
-  parameter_group_name   = aws_db_parameter_group.this.name
-  vpc_security_group_ids = [aws_security_group.rds.id]
+output "db_username" {
+  description = "Database Username"
+  value       = aws_db_instance.this.username
+  sensitive   = true
+}
 
-  publicly_accessible = var.publicly_accessible
-  multi_az            = var.multi_az
+############################################
+# Networking
+############################################
 
-  backup_retention_period = var.backup_retention_period
-  backup_window           = var.backup_window
+output "security_group_id" {
+  description = "RDS Security Group ID"
+  value       = aws_security_group.rds.id
+}
 
-  maintenance_window = var.maintenance_window
+output "db_subnet_group_name" {
+  description = "DB Subnet Group Name"
+  value       = aws_db_subnet_group.this.name
+}
 
-  monitoring_interval = var.monitoring_interval
-  monitoring_role_arn = aws_iam_role.rds_monitoring.arn
+output "parameter_group_name" {
+  description = "DB Parameter Group Name"
+  value       = aws_db_parameter_group.this.name
+}
 
-  performance_insights_enabled = var.performance_insights_enabled
+############################################
+# Monitoring
+############################################
 
-  enabled_cloudwatch_logs_exports = [
-    "postgresql",
-    "upgrade"
-  ]
+output "monitoring_role_arn" {
+  description = "Enhanced Monitoring Role ARN"
+  value       = aws_iam_role.rds_monitoring.arn
+}
 
-  auto_minor_version_upgrade = true
-  apply_immediately          = true
+############################################
+# Database Information
+############################################
 
-  deletion_protection = var.deletion_protection
+output "engine" {
+  description = "Database Engine"
+  value       = aws_db_instance.this.engine
+}
 
-  skip_final_snapshot = var.skip_final_snapshot
+output "engine_version" {
+  description = "Database Engine Version"
+  value       = aws_db_instance.this.engine_version
+}
 
-  final_snapshot_identifier = var.skip_final_snapshot ? null : "${var.project_name}-${var.environment}-final-snapshot"
+output "instance_class" {
+  description = "RDS Instance Class"
+  value       = aws_db_instance.this.instance_class
+}
 
-  copy_tags_to_snapshot = true
+############################################
+# Backup
+############################################
 
-  #publicly_accessible = false
+output "backup_retention_period" {
+  description = "Backup Retention Period"
+  value       = aws_db_instance.this.backup_retention_period
+}
 
-  delete_automated_backups = true
+############################################
+# Availability
+############################################
 
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-postgres"
-    }
-  )
+output "availability_zone" {
+  description = "Availability Zone"
+  value       = aws_db_instance.this.availability_zone
+}
 
-  depends_on = [
-    aws_db_parameter_group.this,
-    aws_db_subnet_group.this,
-    aws_iam_role_policy_attachment.rds_monitoring
-  ]
+output "multi_az" {
+  description = "Multi AZ Enabled"
+  value       = aws_db_instance.this.multi_az
+}
+
+############################################
+# Storage
+############################################
+
+output "allocated_storage" {
+  description = "Allocated Storage (GB)"
+  value       = aws_db_instance.this.allocated_storage
+}
+
+output "storage_encrypted" {
+  description = "Storage Encryption Status"
+  value       = aws_db_instance.this.storage_encrypted
 }
