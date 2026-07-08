@@ -1,0 +1,41 @@
+CREATE TABLE IF NOT EXISTS users (
+
+    id SERIAL PRIMARY KEY,
+
+    name VARCHAR(100) NOT NULL,
+
+    email VARCHAR(150) UNIQUE NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+);
+
+
+
+CREATE TABLE IF NOT EXISTS products (
+
+    id SERIAL PRIMARY KEY,
+
+    name VARCHAR(100) NOT NULL,
+
+    price DECIMAL(10,2) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+);
+
+
+
+CREATE TABLE IF NOT EXISTS orders (
+
+    id SERIAL PRIMARY KEY,
+
+    user_id INTEGER REFERENCES users(id),
+
+    product_id INTEGER REFERENCES products(id),
+
+    quantity INTEGER DEFAULT 1,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+);
